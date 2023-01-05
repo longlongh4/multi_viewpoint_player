@@ -18,10 +18,10 @@ All videos are encoded in 24 fps with forced GOP at every second. So there will 
 
 ## New Media Container Format
 
-The current media container formats like MP4, MKV or other format are not efficiency for indexing the multi camera streams. We need to locate any camera at specific position lightling fast to provide smooth  user experience. We also need to store all video frames in more compact way to save bandwidth and decrese the latency when switching cameras.
+The current media container formats like MP4, MKV, or other formats are not efficient for indexing multi-camera streams. We need to locate any camera at a specific position lightning fast to provide a smooth user experience. We also need to store all video frames in a more compact way to save bandwidth and decrease the latency when switching cameras.
 
-Then I will design a new media container and implement the muxer and demuxer. In order to save time for the hackathon, I plan to use `Protobuf` to serialize the frame indexs and use `Kaitai Struct` to simplify the binary format definition.
+Then I will design a new media container and implement the muxer and demuxer. To save time for the hackathon, I plan to use `Protobuf` to serialize the frame indexes and use `Kaitai Struct` to simplify the binary format definition.
 
 ![](./readme/container_structure_graph.png)
 
-File structure is defined in [file_structure.ksy](./container_design/file_structure.ksy) and media index is defined in [media_index.proto](container_design/media_index.proto). I used [kaitai-struct-compiler](https://kaitai.io/) and [protodot](https://github.com/seamia/protodot) to generate the graphviz dot file and then join them together.
+File structure is defined in [file_structure.ksy](./container_design/file_structure.ksy) and media index is defined in [media_index.proto](container_design/media_index.proto). I used [kaitai-struct-compiler](https://kaitai.io/) and [protodot](https://github.com/seamia/protodot) to generate the Graphviz dot files and then join them together.
