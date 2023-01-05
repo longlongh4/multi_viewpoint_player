@@ -1,0 +1,25 @@
+syntax = "proto3";
+option go_package = "github.com/longlongh4/multi_viewpoint_player/protos";
+
+message Index {
+    repeated Camera cameras = 1;
+    uint32 camera_count = 2;
+}
+
+message Camera {
+    repeated Frame frames = 1;
+    float angle = 2;
+    uint32 frame_count = 3;
+    uint32 width = 4;
+    uint32 height = 5;
+    uint32 framerate = 6;
+    uint32 timescale = 7;
+    string codec = 8;
+}
+
+message Frame {
+    uint64 offset = 1;
+    uint32 size = 2;
+    uint64 timestamp = 3;
+    bool keyframe = 4;
+}
