@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "github.com/longlongh4/multi_viewpoint_player/protos";
+option go_package = "github.com/longlongh4/multi_viewpoint_player/muxer/protos";
 
 message Index {
     repeated Camera cameras = 1;

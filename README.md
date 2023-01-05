@@ -25,3 +25,7 @@ Then I will design a new media container and implement the muxer and demuxer. To
 ![](./readme/container_structure_graph.png)
 
 File structure is defined in [file_structure.ksy](./container_design/file_structure.ksy) and media index is defined in [media_index.proto](container_design/media_index.proto). I used [kaitai-struct-compiler](https://kaitai.io/) and [protodot](https://github.com/seamia/protodot) to generate the Graphviz dot files and then join them together.
+
+## Muxer
+
+I plan to use Golang to implement the Muxer because we could get the (IVF parserhttps://github.com/pion/webrtc/blob/master/pkg/media/ivfreader/ivfreader.go)[https://github.com/pion/webrtc/blob/master/pkg/media/ivfreader/ivfreader.go] for free from the WebRTC project.
