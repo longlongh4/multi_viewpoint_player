@@ -8,7 +8,7 @@ let headerSize = 0;
 let mvvIndex = null;
 let decodedFrames = [];
 
-const mediaUrl = "http://127.0.0.1:8080/out.mvv";
+const mediaUrl = "http://localhost:8080/out.mvv";
 
 async function parseHeader() {
   const parser = new Parser()
@@ -67,10 +67,23 @@ function configDecoder() {
 }
 
 function decodeFramesFromBuffer(pendingFrames, buffer) {
-  if (pendingFrame <= 0) {
-    return buffer;
+  console.log(pendingFrames);
+  let offset = 0;
+  while (
+    pendingFrames.length > 0 &&
+    pendingFrames[0].size + offset <= buffer.length
+  ) {
+    const frame = pendingFrames.shift();
+    const encodedVideoChunk = new EncodedVideoChunk({
+      type: frame.keyframe ? "key" : "delta",
+      timestamp: (frame.timestamp / 24) * 1000,
+      duration: (1 / 24) * 1000,
+      data: buffer.slice(offset, offset + frame.size),
+    });
+    decoder.decode(encodedVideoChunk);
+    offset += frame.size;
   }
-  // todo, scan frame list and decode from buffer
+  return buffer.slice(offset);
 }
 
 // secondIndex: start at which second in time
@@ -91,15 +104,17 @@ async function loadCamera(cameraIndex, secondIndex) {
     },
   });
   let pendingFrames = camera.frames.slice(secondIndex * camera.framerate);
-  //   const reader = response.body.getReader();
-  //   let result = await reader.read();
-  //   let buffer = new Uint8Array();
-  //   while (!result.done) {
-  //     console.log(result.value);
-  //     decoder.decode(result.value);
-  //     buffer = utils.joinBuffer(buffer, result.value);
-  //     result = await reader.read();
-  //   }
+  const reader = response.body.getReader();
+  let result = await reader.read();
+  let buffer = new Uint8Array();
+  console.log(result.value);
+  console.log(result.done);
+  while (!result.done) {
+    buffer = utils.joinBuffer(buffer, result.value);
+    console.log("======", buffer);
+    buffer = decodeFramesFromBuffer(pendingFrames, buffer);
+    result = await reader.read();
+  }
 }
 
 self.addEventListener("message", (message) => {
