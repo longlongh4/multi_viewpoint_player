@@ -1,0 +1,18 @@
+{
+  "name": "multi_viewpoint_player",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx parcel src/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.8.2"
+  },
+  "dependencies": {
+    "binary-parser": "^2.2.1",
+    "pbf": "^3.2.1"
+  }
+}
