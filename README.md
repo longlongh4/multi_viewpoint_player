@@ -28,4 +28,5 @@ File structure is defined in [file_structure.ksy](./container_design/file_struct
 
 ## Muxer
 
-I plan to use Golang to implement the Muxer because we could get the (IVF parserhttps://github.com/pion/webrtc/blob/master/pkg/media/ivfreader/ivfreader.go)[https://github.com/pion/webrtc/blob/master/pkg/media/ivfreader/ivfreader.go] for free from the WebRTC project.
+I plan to use Golang to implement the Muxer because we could get the [IVF Parser](https://github.com/pion/webrtc/blob/master/pkg/media/ivfreader/ivfreader.go) for free from the WebRTC project.
+
