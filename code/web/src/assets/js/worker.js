@@ -102,6 +102,11 @@ class Player {
   }
 }
 
+let lastRenderedFrame = {
+  cameraIndex: -1,
+  timestamp: -1,
+};
+
 function renderAnimationFrame(time) {
   let decodedFrames = context.players[context.currentPlayerIndex].decodedFrames;
   if (decodedFrames.length > 0) {
@@ -112,9 +117,33 @@ function renderAnimationFrame(time) {
       timer.elapsed += time - timer.lastTimeStamp;
     }
     timer.lastTimeStamp = time;
-    if (decodedFrames[0].timestamp <= timer.elapsed) {
-      const frame = decodedFrames.shift();
-      context.renderer.draw(frame);
+    for (let i = 0; i < 9; i++) {
+      const tmpDecodedFrames = context.players[i].decodedFrames;
+      while (
+        tmpDecodedFrames.length > 0 &&
+        tmpDecodedFrames[0].timestamp <= timer.elapsed - 41.6
+      ) {
+        const frame = tmpDecodedFrames.shift();
+        frame.close();
+      }
+    }
+
+    if (
+      decodedFrames.length > 0 &&
+      decodedFrames[0].timestamp <= timer.elapsed
+    ) {
+      const frame = decodedFrames[0];
+      if (
+        lastRenderedFrame.cameraIndex === context.currentPlayerIndex &&
+        lastRenderedFrame.timestamp === frame.timestamp
+      ) {
+      } else {
+        lastRenderedFrame = {
+          cameraIndex: context.currentPlayerIndex,
+          timestamp: frame.timestamp,
+        };
+        context.renderer.draw(frame);
+      }
     }
     requestAnimationFrame(renderAnimationFrame);
   }
@@ -141,6 +170,9 @@ self.addEventListener("message", (message) => {
       break;
     case "mouseup":
       timer.paused = false;
+      break;
+    case "switchplayer":
+      context.currentPlayerIndex = value;
       break;
     default:
       break;
