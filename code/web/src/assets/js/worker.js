@@ -9,10 +9,8 @@ let context = {
   renderer: null,
   currentCameraPlayer: null,
 };
-let timer = {
-  startedAt: -1,
-  pausedAt: -1,
-};
+let timeElapsed = 0;
+let lastTimeStamp = -1;
 
 class Player {
   constructor(cameraIndex) {
@@ -99,13 +97,15 @@ class Player {
   }
 }
 
-function renderAnimationFrame() {
+function renderAnimationFrame(time) {
   let decodedFrames = context.currentCameraPlayer.decodedFrames;
   if (decodedFrames.length > 0) {
-    if (timer.startedAt === -1) {
-      timer.startedAt = performance.now();
+    if (lastTimeStamp === -1) {
+      lastTimeStamp = time;
     }
-    if (decodedFrames[0].timestamp <= performance.now() - timer.startedAt) {
+    timeElapsed += time - lastTimeStamp;
+    lastTimeStamp = time;
+    if (decodedFrames[0].timestamp <= timeElapsed) {
       const frame = decodedFrames.shift();
       context.renderer.draw(frame);
     }
@@ -119,7 +119,7 @@ self.addEventListener("message", (message) => {
   parseHeader(context.mediaUrl).then(([size, index]) => {
     context.headerSize = size;
     context.mvvIndex = index;
-    context.currentCameraPlayer = new Player(0);
+    context.currentCameraPlayer = new Player(8);
     context.currentCameraPlayer.loadCamera(0);
   });
 });
