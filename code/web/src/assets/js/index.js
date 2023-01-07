@@ -8,4 +8,11 @@ const worker = new Worker(new URL("./worker.js", import.meta.url), {
 });
 worker.addEventListener("message", setStatus);
 
-worker.postMessage(canvas, [canvas]);
+worker.postMessage(["init", canvas], [canvas]);
+
+document.addEventListener("mousedown", (event) => {
+  worker.postMessage(["mousedown", null]);
+});
+document.addEventListener("mouseup", (event) => {
+  worker.postMessage(["mouseup", null]);
+});

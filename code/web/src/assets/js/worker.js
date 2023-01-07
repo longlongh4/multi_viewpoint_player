@@ -10,8 +10,12 @@ let context = {
   players: [],
   currentPlayerIndex: 3,
 };
-let timeElapsed = 0;
-let lastTimeStamp = -1;
+
+let timer = {
+  elapsed: 0,
+  lastTimeStamp: -1,
+  paused: false,
+};
 
 class Player {
   constructor(cameraIndex) {
@@ -101,12 +105,14 @@ class Player {
 function renderAnimationFrame(time) {
   let decodedFrames = context.players[context.currentPlayerIndex].decodedFrames;
   if (decodedFrames.length > 0) {
-    if (lastTimeStamp === -1) {
-      lastTimeStamp = time;
+    if (timer.lastTimeStamp === -1) {
+      timer.lastTimeStamp = time;
     }
-    timeElapsed += time - lastTimeStamp;
-    lastTimeStamp = time;
-    if (decodedFrames[0].timestamp <= timeElapsed) {
+    if (!timer.paused) {
+      timer.elapsed += time - timer.lastTimeStamp;
+    }
+    timer.lastTimeStamp = time;
+    if (decodedFrames[0].timestamp <= timer.elapsed) {
       const frame = decodedFrames.shift();
       context.renderer.draw(frame);
     }
@@ -115,15 +121,28 @@ function renderAnimationFrame(time) {
 }
 
 self.addEventListener("message", (message) => {
-  let canvas = message.data;
-  context.renderer = new Canvas2DRenderer(canvas);
-  parseHeader(context.mediaUrl).then(([size, index]) => {
-    context.headerSize = size;
-    context.mvvIndex = index;
-    for (let i = 0; i < 9; i++) {
-      let player = new Player(i);
-      context.players.push(player);
-      player.loadCamera(0);
-    }
-  });
+  let [command, value] = message.data;
+  switch (command) {
+    case "init":
+      let canvas = value;
+      context.renderer = new Canvas2DRenderer(canvas);
+      parseHeader(context.mediaUrl).then(([size, index]) => {
+        context.headerSize = size;
+        context.mvvIndex = index;
+        for (let i = 0; i < 9; i++) {
+          let player = new Player(i);
+          context.players.push(player);
+          player.loadCamera(0);
+        }
+      });
+      break;
+    case "mousedown":
+      timer.paused = true;
+      break;
+    case "mouseup":
+      timer.paused = false;
+      break;
+    default:
+      break;
+  }
 });
