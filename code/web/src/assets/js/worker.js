@@ -13,8 +13,6 @@ let context = {
 
 let timer = {
   elapsed: 0,
-  lastTimeStamp: -1,
-  paused: false,
 };
 
 class Player {
@@ -107,16 +105,9 @@ let lastRenderedFrame = {
   timestamp: -1,
 };
 
-function renderAnimationFrame(time) {
+function renderAnimationFrame() {
   let decodedFrames = context.players[context.currentPlayerIndex].decodedFrames;
   if (decodedFrames.length > 0) {
-    if (timer.lastTimeStamp === -1) {
-      timer.lastTimeStamp = time;
-    }
-    if (!timer.paused) {
-      timer.elapsed += time - timer.lastTimeStamp;
-    }
-    timer.lastTimeStamp = time;
     for (let i = 0; i < 9; i++) {
       const tmpDecodedFrames = context.players[i].decodedFrames;
       while (
@@ -165,14 +156,11 @@ self.addEventListener("message", (message) => {
         }
       });
       break;
-    case "mousedown":
-      timer.paused = true;
-      break;
-    case "mouseup":
-      timer.paused = false;
-      break;
     case "switchplayer":
       context.currentPlayerIndex = value;
+      break;
+    case "update":
+      timer.elapsed = value;
       break;
     default:
       break;
