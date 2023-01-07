@@ -41,16 +41,18 @@ async function parseHeader() {
 }
 
 let renderer = null;
-let pendingFrame = null;
 
 function renderAnimationFrame() {
-  renderer.draw(pendingFrame);
+  if (decodedFrames.length > 0) {
+    const frame = decodedFrames.shift();
+    renderer.draw(frame);
+    requestAnimationFrame(renderAnimationFrame);
+  }
 }
-
 // Set up a VideoDecoer.
 const decoder = new VideoDecoder({
   output(frame) {
-    pendingFrame = frame;
+    decodedFrames.push(frame);
     requestAnimationFrame(renderAnimationFrame);
   },
   error(e) {
@@ -67,7 +69,6 @@ function configDecoder() {
 }
 
 function decodeFramesFromBuffer(pendingFrames, buffer) {
-  console.log(pendingFrames);
   let offset = 0;
   while (
     pendingFrames.length > 0 &&
@@ -89,7 +90,8 @@ function decodeFramesFromBuffer(pendingFrames, buffer) {
 // secondIndex: start at which second in time
 async function loadCamera(cameraIndex, secondIndex) {
   let camera = mvvIndex.cameras[cameraIndex];
-  let cameraStartOffset = () => {
+  let cameraStartOffset = (cameraIndex, secondIndex) => {
+    let camera = mvvIndex.cameras[cameraIndex];
     return camera.frames[secondIndex * camera.framerate].offset + headerSize;
   };
   let byteRange =
@@ -107,11 +109,8 @@ async function loadCamera(cameraIndex, secondIndex) {
   const reader = response.body.getReader();
   let result = await reader.read();
   let buffer = new Uint8Array();
-  console.log(result.value);
-  console.log(result.done);
   while (!result.done) {
     buffer = utils.joinBuffer(buffer, result.value);
-    console.log("======", buffer);
     buffer = decodeFramesFromBuffer(pendingFrames, buffer);
     result = await reader.read();
   }
