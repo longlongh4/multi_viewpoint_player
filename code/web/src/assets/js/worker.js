@@ -7,7 +7,8 @@ let context = {
   headerSize: 0,
   mvvIndex: null,
   renderer: null,
-  currentCameraPlayer: null,
+  players: [],
+  currentPlayerIndex: 3,
 };
 let timeElapsed = 0;
 let lastTimeStamp = -1;
@@ -98,7 +99,7 @@ class Player {
 }
 
 function renderAnimationFrame(time) {
-  let decodedFrames = context.currentCameraPlayer.decodedFrames;
+  let decodedFrames = context.players[context.currentPlayerIndex].decodedFrames;
   if (decodedFrames.length > 0) {
     if (lastTimeStamp === -1) {
       lastTimeStamp = time;
@@ -119,7 +120,10 @@ self.addEventListener("message", (message) => {
   parseHeader(context.mediaUrl).then(([size, index]) => {
     context.headerSize = size;
     context.mvvIndex = index;
-    context.currentCameraPlayer = new Player(8);
-    context.currentCameraPlayer.loadCamera(0);
+    for (let i = 0; i < 9; i++) {
+      let player = new Player(i);
+      context.players.push(player);
+      player.loadCamera(0);
+    }
   });
 });
