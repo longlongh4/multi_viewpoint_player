@@ -5,7 +5,7 @@
   "source": "src/index.html",
   "scripts": {
     "start": "npx parcel src/index.html",
-    "build": "npx parcel build --no-source-maps src/index.html"
+    "build": "npx parcel build --no-source-maps src/index.html --public-url /multi_viewpoint_player/"
   },
   "author": "",
   "license": "ISC",
