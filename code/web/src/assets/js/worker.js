@@ -75,6 +75,9 @@ function decodeFramesFromBuffer(pendingFrames, buffer) {
     pendingFrames[0].size + offset <= buffer.length
   ) {
     const frame = pendingFrames.shift();
+    if (frame.keyframe) {
+      decoder.flush();
+    }
     const encodedVideoChunk = new EncodedVideoChunk({
       type: frame.keyframe ? "key" : "delta",
       timestamp: (frame.timestamp / 24) * 1000,
@@ -83,6 +86,9 @@ function decodeFramesFromBuffer(pendingFrames, buffer) {
     });
     decoder.decode(encodedVideoChunk);
     offset += frame.size;
+  }
+  if (pendingFrames.length === 0) {
+    decoder.flush();
   }
   return buffer.slice(offset);
 }
