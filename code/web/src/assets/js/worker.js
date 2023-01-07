@@ -1,44 +1,12 @@
-const Parser = require("binary-parser").Parser;
-const MvvIndex = require("./mvv_index").Index;
-const Pbf = require("pbf");
 const utils = require("./utils");
 const Canvas2DRenderer = require("./renderer").Canvas2DRenderer;
+const parseHeader = require("./parse_header").parseHeader;
 
 let headerSize = 0;
 let mvvIndex = null;
 let decodedFrames = [];
 
 const mediaUrl = "http://localhost:8080/out.mvv";
-
-async function parseHeader() {
-  const parser = new Parser()
-    .endianness("little")
-    .array("magic", { type: "uint8", length: 4 })
-    .uint16("version")
-    .uint32("len_index_body");
-
-  const response = await fetch(mediaUrl);
-  const reader = response.body.getReader();
-  let result = await reader.read();
-  let buffer = new Uint8Array();
-  let getFileHeader = false;
-  let fileHeader = null;
-
-  while (!result.done) {
-    if (!getFileHeader) {
-      fileHeader = parser.parse(result.value);
-      headerSize = 10 + fileHeader.len_index_body;
-      getFileHeader = true;
-    }
-    buffer = utils.joinBuffer(buffer, result.value);
-    if (getFileHeader && buffer.length >= headerSize) {
-      let pbf = new Pbf(buffer.slice(10, headerSize));
-      let mvvIndex = MvvIndex.read(pbf);
-      return mvvIndex;
-    }
-    result = await reader.read();
-  }
-}
 
 let renderer = null;
 
@@ -95,6 +63,7 @@ function decodeFramesFromBuffer(pendingFrames, buffer) {
 
 // secondIndex: start at which second in time
 async function loadCamera(cameraIndex, secondIndex) {
+  console.log(mvvIndex);
   let camera = mvvIndex.cameras[cameraIndex];
   let cameraStartOffset = (cameraIndex, secondIndex) => {
     let camera = mvvIndex.cameras[cameraIndex];
@@ -125,7 +94,8 @@ async function loadCamera(cameraIndex, secondIndex) {
 self.addEventListener("message", (message) => {
   let canvas = message.data;
   renderer = new Canvas2DRenderer(canvas);
-  parseHeader().then((index) => {
+  parseHeader(mediaUrl).then(([size, index]) => {
+    headerSize = size;
     mvvIndex = index;
     configDecoder();
     loadCamera(0, 0);
