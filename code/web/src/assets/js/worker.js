@@ -9,11 +9,21 @@ let decodedFrames = [];
 const mediaUrl = "http://localhost:8080/out.mvv";
 
 let renderer = null;
+let timer = {
+  startedAt: -1,
+  pausedAt: -1,
+};
 
 function renderAnimationFrame() {
+  console.log(performance.now());
   if (decodedFrames.length > 0) {
-    const frame = decodedFrames.shift();
-    renderer.draw(frame);
+    if (timer.startedAt === -1) {
+      timer.startedAt = performance.now();
+    }
+    if (decodedFrames[0].timestamp <= performance.now() - timer.startedAt) {
+      const frame = decodedFrames.shift();
+      renderer.draw(frame);
+    }
     requestAnimationFrame(renderAnimationFrame);
   }
 }
