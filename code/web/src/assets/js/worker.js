@@ -52,8 +52,8 @@ class Player {
 
     let byteRange =
       this.cameraIndex === context.mvvIndex.camera_count - 1
-        ? `${cameraStartOffset(this.cameraIndex, secondIndex)}-`
-        : `${cameraStartOffset(this.cameraIndex, secondIndex)}-${
+        ? `bytes=${cameraStartOffset(this.cameraIndex, secondIndex)}-`
+        : `bytes=${cameraStartOffset(this.cameraIndex, secondIndex)}-${
             cameraStartOffset(this.cameraIndex + 1, 0) - 1
           }`;
     let response = await fetch(context.mediaUrl, {
