@@ -3,7 +3,8 @@ const Canvas2DRenderer = require("./renderer").Canvas2DRenderer;
 const parseHeader = require("./parse_header").parseHeader;
 
 let context = {
-  mediaUrl: "/multi_viewpoint_player/assets/video.mvv",
+  mediaUrl:
+    "https://raw.githubusercontent.com/longlongh4/multi_viewpoint_player/gh-pages/assets/video.mvv",
   headerSize: 0,
   mvvIndex: null,
   renderer: null,
