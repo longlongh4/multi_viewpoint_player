@@ -3,13 +3,12 @@ const Canvas2DRenderer = require("./renderer").Canvas2DRenderer;
 const parseHeader = require("./parse_header").parseHeader;
 
 let context = {
-  mediaUrl:
-    "https://longlongh4.github.io/multi_viewpoint_player/assets/video.mvv",
+  mediaUrl: "/multi_viewpoint_player/assets/video.mvv",
   headerSize: 0,
   mvvIndex: null,
   renderer: null,
   players: [],
-  currentPlayerIndex: 3,
+  currentPlayerIndex: 5,
 };
 
 let timer = {
