@@ -30,3 +30,18 @@ File structure is defined in [file_structure.ksy](./container_design/file_struct
 
 I plan to use Golang to implement the Muxer because we could get the [IVF Parser](https://github.com/pion/webrtc/blob/master/pkg/media/ivfreader/ivfreader.go) for free from the WebRTC project.
 
+## Webcodec
+
+I used Webcodec to decode the content of 9 cameras and render the images to canvas.
+
+## Demo
+
+![](./code/slides/qml/imgs/demo.gif)
+
+
+[Demo: https://longlongh4.github.io/multi_viewpoint_player](https://longlongh4.github.io/multi_viewpoint_player)
+
+## Slide
+
+[Slides](https://longlongh4.github.io/multi_viewpoint_player/slides/)
+
